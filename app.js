@@ -41,7 +41,7 @@ serverWS.on('connection', (ws) => {
 
 	ws.on('message', (data) => {
 		// console.log(1000, JSON.parse(data));
-		if (data.toString == 'My name is Phuong') {
+		if (data.toString() == 'My name is Phuong') {
 			serverWS.clients.forEach((client) => {
 				let dataSend = 'Huy Yêu Phượng';
 				client.send(dataSend.toString());
