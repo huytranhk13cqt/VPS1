@@ -50,9 +50,9 @@ serverWS.on('connection', (ws) => {
 		console.log(400, '[DISCONNECT] -> 1 Client Dissapear');
 	});
 
-	setInterval(() => {
-		serverWS.clients.forEach((client) => {
-			client.send(new Date().toTimeString());
-		});
-	}, 1000);
+	// setInterval(() => {
+	// 	serverWS.clients.forEach((client) => {
+	// 		client.send(new Date().toTimeString());
+	// 	});
+	// }, 1000);
 });
