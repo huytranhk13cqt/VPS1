@@ -40,10 +40,13 @@ serverWS.on('connection', (ws) => {
 	console.log(200, '[CONNECT] -> New Ws Client');
 
 	ws.on('message', (data) => {
-		console.log(1000, JSON.parse(data));
-		serverWS.clients.forEach((client) => {
-			client.send(data.toString());
-		});
+		// console.log(1000, JSON.parse(data));
+		if (data.toString == 'My name is Phuong') {
+			serverWS.clients.forEach((client) => {
+				let dataSend = 'Huy Yêu Phượng';
+				client.send(dataSend.toString());
+			});
+		}
 	});
 
 	ws.on('close', () => {
