@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.DEPLOY_EXPRESS_PORT || 6789;
 let bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -17,9 +17,21 @@ app.use(express.json());
 app.use(cors());
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_LOCAL_URL_DEPLOY, () => {
+mongoose.connect(process.env.MONGODB_CLOUD_URL, () => {
 	console.log(200, '[CONNECT] -> Database');
 });
+
+const { Friends } = require('./model/model');
+
+let createNewFriend = async (body) => {
+	const newFriend = new Friends(body);
+	const saveNewFriend = await newFriend.save();
+	console.log(
+		'-------------------- create success friend: \n',
+		saveNewFriend,
+		'\n----------------------------------------'
+	);
+};
 
 app.get('/huy', (req, res) => {
 	res.sendFile(path.join(__dirname + '/index.html'));
@@ -40,22 +52,28 @@ serverWS.on('connection', (ws) => {
 	console.log(200, '[CONNECT] -> New Ws Client');
 
 	ws.on('message', (data) => {
-		// console.log(1000, JSON.parse(data));
 		if (data.toString() == 'My name is Phuong') {
 			serverWS.clients.forEach((client) => {
 				let dataSend = 'Huy Yêu Phượng';
 				client.send(dataSend.toString());
 			});
+		} else {
+			serverWS.clients.forEach((client) => {
+				client.send(data.toString());
+			});
+		}
+		try {
+			let dataJson = JSON.parse(data);
+			if (dataJson) {
+				console.log('start create new friend');
+				createNewFriend(dataJson);
+			}
+		} catch (error) {
+			// không làm gì hết
 		}
 	});
 
 	ws.on('close', () => {
-		console.log(400, '[DISCONNECT] -> 1 Client Dissapear');
+		console.log(200, '[DISCONNECT] -> 1 Client Dissapear');
 	});
-
-	// setInterval(() => {
-	// 	serverWS.clients.forEach((client) => {
-	// 		client.send(new Date().toTimeString());
-	// 	});
-	// }, 1000);
 });
